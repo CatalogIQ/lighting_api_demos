@@ -1,0 +1,73 @@
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+
+<div id="myGrid" style="height: 100%; width: 100%; --ag-line-height: 100px;" class="ag-theme-alpine"></div>
+
+<script type="text/javascript">
+
+        // Column definitions
+        const columnDefs = [
+            {
+                headerName: "Cover Image",
+                field: "cover_image_url",
+                cellRenderer: function (params) {
+                    return `<img src="${params.value}" style="width: 75px; height: auto;" />`;
+                }
+            },
+            { headerName: "Company", field: "company", sortable: true, filter: true, cellStyle: { textAlign: "left" } },
+            { headerName: "File Name", field: "file_name", sortable: true, filter: true, cellStyle: { textAlign: "left" } },
+            { headerName: "Valid From", field: "valid_from_date", sortable: true, filter: true, cellStyle: { textAlign: "left" } },
+            { headerName: "Valid To", field: "valid_to_date", sortable: true, filter: true, cellStyle: { textAlign: "left" } },
+            {
+                headerName: "Download",
+                field: "file_url",
+                cellStyle: { textAlign: "left" },
+                cellRenderer: function (params) {
+                    return `<a style="width:100%" href="${params.value}" target="_blank">Download</a>`;
+                }
+            },
+            {
+                headerName: "Vendor",
+                field: "vendor_document_url",
+                cellStyle: { textAlign: "left" },
+                cellRenderer: function (params) {
+                    return `<a style="width:100%" href="${params.value}" target="_blank">Visit</a>`;
+                }
+            },
+            {
+                headerName: "Tags",
+                field: "tags",
+                sortable: true,
+                filter: true,
+                cellStyle: { textAlign: "left" },
+                valueGetter: params => params.data.tags.join(', ')
+            }
+        ];
+    
+        // Grid Options
+        const gridOptions = {
+            columnDefs: columnDefs,
+            domLayout: 'autoHeight',
+            rowHeight: 100
+        };
+    
+        // Fetch data from the API and set as rowData
+        fetch('https://catalogiq.app/api/v1/catalogs?api_key=11111')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                gridOptions.api.setRowData(data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error.toString());
+            });
+    
+        // Initialize the grid
+        document.addEventListener("DOMContentLoaded", function () {
+            const gridDiv = document.querySelector('#myGrid');
+            gridDiv.innerHTML = '';
+            new agGrid.Grid(gridDiv, gridOptions);
+        });
+    
+    </script>
+
